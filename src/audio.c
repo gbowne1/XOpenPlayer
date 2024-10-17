@@ -15,7 +15,6 @@ void play_sine_wave(Display *display, int screen)
     int height = 600; // Set a default height
     int depth = DefaultDepth(display, screen);
     unsigned long black = BlackPixel(display, screen);
-    unsigned long white = WhitePixel(display, screen);
 
     XSetWindowAttributes attr;
     attr.event_mask = ExposureMask | KeyPressMask | StructureNotifyMask | SubstructureNotifyMask;
@@ -88,11 +87,13 @@ void play_sine_wave(Display *display, int screen)
 void draw_sine_wave(Display *display, Window win, int width, int height, float frequency, float amplitude, float phase)
 {
     GC gc = XCreateGC(display, win, 0, NULL);
-    unsigned long white = WhitePixel(display, DefaultScreen(display));
-    XSetForeground(display, gc, white);
+    XSetForeground(display, gc, WhitePixel(display, DefaultScreen(display)));
+    
+    // Clear the window
+    XClearWindow(display, win);
     XDrawLine(display, win, gc, 0, height / 2, width, height / 2);
 
-    for (int x = 1; x < width; x++) {
+    for (int x = 0; x < width; x++) {
         float y = sin(phase + (float)x * M_PI * frequency / width) * amplitude + height / 2;
         XDrawPoint(display, win, gc, x, (int)y);
     }

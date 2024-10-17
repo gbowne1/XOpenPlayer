@@ -5,6 +5,9 @@
 
 int main(int argc, char **argv)
 {
+    (void)argc;
+    (void)argv;
+    
     Display *display = XOpenDisplay(NULL);
     if (display == NULL) {
         fprintf(stderr, "Cannot open display\n");

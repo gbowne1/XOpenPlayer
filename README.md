@@ -65,9 +65,9 @@ Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ## Builds and Compiles
 
-`gcc -Wall -Wextra -pedantic -std=c99 -o XOpenPlayer src/main.c src/audio.c -lX11 -lXext -lXrandr`
+`gcc -Wall -Wextra -pedantic -std=c99 -o XOpenPlayer src/main.c src/audio.c -lX11 -lXext -lXrandr -lm`
 
-also use make by running  `make`
+also use make by running  `make` [Note: Make && CMake coming soon]
 
 ## License
 
