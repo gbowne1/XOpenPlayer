@@ -1,0 +1,46 @@
+The player interface should use some form of keyboard shortcuts to use the player, outside of a mouse clicky thingie.
+This is my thoughts on that.
+
+Playback Control:
+- Play/Pause: Spacebar
+- Stop: S
+- Next Track: N or Right Arrow
+- Previous Track: P or Left Arrow
+- Seek Forward: Shift + Right Arrow
+- Seek Backward: Shift + Left Arrow
+
+Volume Control:
+- Increase Volume: Up Arrow
+- Decrease Volume: Down Arrow
+- Mute/Unmute: M
+
+Playback Speed:
+- Increase Speed: Ctrl + Right Arrow
+- Decrease Speed: Ctrl + Left Arrow
+
+Playlist Navigation:
+- Next Item: Page Down
+- Previous Item: Page Up
+- Add to Playlist: A
+
+Full screen Toggle:
+- Full screen: F or Alt + Enter
+
+Subtitles:
+- Toggle Subtitles: T
+- Next Subtitle Track: Ctrl + T
+
+Additional Shortcuts:
+- Jump to Start: Home
+- Jump to End: End
+- Step Forward Frame: Shift + Right Arrow (video)
+- Step Backward Frame: Shift + Left Arrow (video)
+- Next Audio Track: Ctrl + Shift + N
+- Previous Audio Track: Ctrl + Shift + P
+- Remove from Playlist: Delete
+- Clear Playlist: Ctrl + Shift + C
+- Sort by Title: Ctrl + T
+- Sort by Duration: Ctrl + D
+- Sort by Date Added: Ctrl + A
+- Loop One Track: Shift + L
+- Cycle Through Aspect Ratios: Ctrl + R
