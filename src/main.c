@@ -15,6 +15,8 @@ int main(int argc, char **argv)
 
     printf("Press Enter to play a sine wave, Ctrl+C to quit...\n");
 
+    printf("Press any key to close the window...\n");
+
     play_sine_wave(display, screen);
 
     XCloseDisplay(display);

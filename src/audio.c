@@ -11,17 +11,16 @@
 
 void play_sine_wave(Display *display, int screen)
 {
-    int width = DisplayWidth(display, screen);
-    int height = DisplayHeight(display, screen);
+    int width = 800;  // Set a default width
+    int height = 600; // Set a default height
     int depth = DefaultDepth(display, screen);
     unsigned long black = BlackPixel(display, screen);
     unsigned long white = WhitePixel(display, screen);
 
     XSetWindowAttributes attr;
-    attr.event_mask = ExposureMask | KeyPressMask;
+    attr.event_mask = ExposureMask | KeyPressMask | StructureNotifyMask | SubstructureNotifyMask;
     attr.background_pixel = black;
     attr.border_pixel = black;
-    attr.override_redirect = True;
 
     // Get the visual for the window
     Visual *visual = DefaultVisual(display, screen);
@@ -32,10 +31,26 @@ void play_sine_wave(Display *display, int screen)
                                0, 0, width, height, 0,
                                depth, InputOutput,
                                visual,
-                               0,
+                               CWEventMask | CWBackPixel | CWBorderPixel,
                                &attr);
 
-    XSelectInput(display, win, ExposureMask | KeyPressMask);
+    // Set window manager hints
+    XSizeHints hints;
+    hints.flags = PMinSize | PMaxSize;
+    hints.min_width = 200;
+    hints.min_height = 150;
+    hints.max_width = DisplayWidth(display, screen);
+    hints.max_height = DisplayHeight(display, screen);
+    XSetWMNormalHints(display, win, &hints);
+
+    // Set window title
+    XStoreName(display, win, "XOpenPlayer");
+
+    // Handle window manager protocols
+    Atom wm_delete_window = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    Atom wm_protocols = XInternAtom(display, "WM_PROTOCOLS", False);
+    XSetWMProtocols(display, win, &wm_delete_window, 1);
+
     XMapWindow(display, win);
 
     float frequency = 440.0f; // Hz
@@ -53,6 +68,19 @@ void play_sine_wave(Display *display, int screen)
             case KeyPress:
                 XDestroyWindow(display, win);
                 return;
+            case ClientMessage:
+                if (event.xclient.message_type == wm_protocols &&
+                    (Atom)event.xclient.data.l[0] == wm_delete_window) {
+                    XDestroyWindow(display, win);
+                    return;
+                }
+                break;
+            case ConfigureNotify:
+                width = event.xconfigure.width;
+                height = event.xconfigure.height;
+                amplitude = height / 2 - 10;
+                draw_sine_wave(display, win, width, height, frequency, amplitude, phase);
+                break;
         }
     }
 }

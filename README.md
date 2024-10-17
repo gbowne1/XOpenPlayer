@@ -14,6 +14,7 @@ A cross-platform multimedia player application built with C99 and X11.
     - [Platform targets](#platform-targets)
   - [Getting Started](#getting-started)
   - [Contributing](#contributing)
+  - [Builds and Compiles](#builds-and-compiles)
   - [License](#license)
   - [Acknowledgments](#acknowledgments)
 
@@ -61,6 +62,12 @@ Solaris
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues or pull requests.
+
+## Builds and Compiles
+
+`gcc -Wall -Wextra -pedantic -std=c99 -o XOpenPlayer src/main.c src/audio.c -lX11 -lXext -lXrandr`
+
+also use make by running  `make`
 
 ## License
 
