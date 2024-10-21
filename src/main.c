@@ -1,28 +1,49 @@
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <X11/Xlib.h>
-#include "../include/audio.h"
+#include "../include/player.h"
 
-int main(int argc, char **argv)
-{
-    (void)argc;
-    (void)argv;
-    
-    Display *display = XOpenDisplay(NULL);
+int main() {
+    Display *display;
+    Window window;
+    XEvent event;
+
+    display = XOpenDisplay(NULL);
     if (display == NULL) {
-        fprintf(stderr, "Cannot open display\n");
+        fprintf(stderr, "Unable to open X display\n");
         exit(1);
     }
 
     int screen = DefaultScreen(display);
+    window = XCreateSimpleWindow(display, RootWindow(display, screen), 10, 10, 800, 600, 1,
+                                 BlackPixel(display, screen), WhitePixel(display, screen));
+    
+    XSelectInput(display, window, ExposureMask | KeyPressMask | StructureNotifyMask);
+    XMapWindow(display, window);
+    
+    // Set the window title
+    XStoreName(display, window, "XOpenPlayer");
 
-    printf("Press Enter to play a sine wave, Ctrl+C to quit...\n");
+    init_player(display, window);
 
-    printf("Press any key to close the window...\n");
+    Atom wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
 
-    play_sine_wave(display, screen);
+    while (1) {
+        XNextEvent(display, &event);
+        if (event.type == Expose) {
+            display_welcome_message(display, window);
+        } else if (event.type == KeyPress) {
+            handle_keypress(&event.xkey);
+        } else if (event.type == ClientMessage) {
+            // Handle window close event
+            if ((long)event.xclient.data.l[0] == (long)wmDeleteWindow) {
+                break; // Exit the loop
+            }
+        }
+    }
 
-    XCloseDisplay(display);
+    XDestroyWindow(display, window); // Clean up window
+    XCloseDisplay(display); // Close the display connection
     return 0;
 }
-
