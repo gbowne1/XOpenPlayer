@@ -2,6 +2,7 @@
 #include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../include/player.h"
 
 int main() {
@@ -18,11 +19,10 @@ int main() {
     int screen = DefaultScreen(display);
     window = XCreateSimpleWindow(display, RootWindow(display, screen), 10, 10, 800, 600, 1,
                                  BlackPixel(display, screen), WhitePixel(display, screen));
-    
-    XSelectInput(display, window, ExposureMask | KeyPressMask | StructureNotifyMask);
+
+    XSelectInput(display, window, ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask);
     XMapWindow(display, window);
     
-    // Set the window title
     XStoreName(display, window, "XOpenPlayer");
 
     init_player(display, window);
@@ -32,18 +32,20 @@ int main() {
     while (1) {
         XNextEvent(display, &event);
         if (event.type == Expose) {
+            draw_menu(display, window);
             display_welcome_message(display, window);
         } else if (event.type == KeyPress) {
             handle_keypress(&event.xkey);
+        } else if (event.type == ButtonPress) {
+            handle_mouse_click(&event.xbutton);
         } else if (event.type == ClientMessage) {
-            // Handle window close event
             if ((long)event.xclient.data.l[0] == (long)wmDeleteWindow) {
-                break; // Exit the loop
+                break;
             }
         }
     }
 
-    XDestroyWindow(display, window); // Clean up window
-    XCloseDisplay(display); // Close the display connection
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
     return 0;
 }
