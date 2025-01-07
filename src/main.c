@@ -29,6 +29,10 @@ int main() {
 
     Atom wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
 
+    // Store initial window size
+    int window_width = 800;
+    int window_height = 600;
+
     while (1) {
         XNextEvent(display, &event);
         if (event.type == Expose) {
@@ -40,8 +44,22 @@ int main() {
             handle_mouse_click(&event.xbutton);
         } else if (event.type == ClientMessage) {
             if ((long)event.xclient.data.l[0] == (long)wmDeleteWindow) {
+                cleanup_player(display);
                 break;
             }
+        } else if (event.type == ConfigureNotify) {
+            // Handle window resize events here
+            window_width = event.xconfigure.width;
+            window_height = event.xconfigure.height;
+
+            // Recalculate positions and sizes of UI elements based on new window size
+            // For example:
+            // - Update button positions based on window width
+            // - Update progress bar size based on window width
+            // - Adjust volume control size, etc.
+            
+            // You can now pass the new width and height to any functions that need them.
+            printf("Window resized to: %d x %d\n", window_width, window_height);
         }
     }
 

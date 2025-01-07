@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 // Constants for UI layout
 #define BUTTON_WIDTH 100
@@ -134,71 +135,68 @@ void draw_menu(Display *display, Window window) {
     XFreeGC(display, gc);
 }
 
+void display_welcome_message(Display *display, Window window) {
+    GC gc = XCreateGC(display, window, 0, NULL);
+    Font font = XLoadFont(display, "fixed");
+    XSetFont(display, gc, font);
+
+    const char *welcome_message = "Welcome to XOpenPlayer!";
+    int text_len = strlen(welcome_message);
+    int text_width = XTextWidth(XQueryFont(display, font), welcome_message, text_len);
+
+    XSetForeground(display, gc, WhitePixel(display, DefaultScreen(display)));
+    XDrawString(display, window, gc, (WINDOW_WIDTH - text_width) / 2, 100, welcome_message, text_len);
+
+    XUnloadFont(display, font);
+    XFreeGC(display, gc);
+}
+
+void cleanup_player(Display *display) {
+    (void)display;  // Suppress the unused parameter warning
+    printf("Cleaning up resources...\n");
+    // Clean-up code (if any)
+}
+
 void handle_keypress(XKeyEvent *event) {
     switch (event->keycode) {
-        case 65: // Spacebar
-            if (player_state.playing) {
-                pause();
-            } else {
-                play();
+        case KEY_PLAY:
+            play();
+            break;
+        case KEY_STOP:
+            stop();
+            break;
+        case KEY_NEXT:
+            next_track();
+            break;
+        case KEY_PREV:
+            previous_track();
+            break;
+        case KEY_VOL_UP:
+            if (player_state.volume < 1.0f) {
+                player_state.volume += 0.1f;
             }
             break;
-        case 39: stop(); break; // 'S' key
-        case 57: next_track(); break; // 'N' key
-        case 55: previous_track(); break; // 'P' key
-        case 111: // Up arrow
-            player_state.volume = (player_state.volume + 0.1f > 1.0f) ? 1.0f : player_state.volume + 0.1f;
-            printf("Volume: %.1f\n", player_state.volume);
+        case KEY_VOL_DOWN:
+            if (player_state.volume > 0.0f) {
+                player_state.volume -= 0.1f;
+            }
             break;
-        case 116: // Down arrow
-            player_state.volume = (player_state.volume - 0.1f < 0.0f) ? 0.0f : player_state.volume - 0.1f;
-            printf("Volume: %.1f\n", player_state.volume);
+        default:
             break;
     }
 }
 
 void handle_mouse_click(XButtonEvent *event) {
-    // Menu clicks
-    if (event->y < MENU_HEIGHT) {
-        int menu_index = event->x / MENU_ITEM_WIDTH;
-        switch (menu_index) {
-            case 0: printf("File menu clicked\n"); break;
-            case 1: printf("Edit menu clicked\n"); break;
-            case 2: printf("Help menu clicked\n"); break;
-        }
-        return;
-    }
-    
-    // Progress bar clicks
-    if (event->y >= PROGRESS_BAR_Y && event->y <= PROGRESS_BAR_Y + PROGRESS_BAR_HEIGHT) {
-        float click_position = (float)(event->x - 50) / (800 - 100);
-        if (click_position >= 0.0f && click_position <= 1.0f) {
-            player_state.progress = click_position;
-            printf("Seeking to: %.1f%%\n", player_state.progress * 100);
-        }
-        return;
-    }
-    
-    // Volume bar clicks
-    if (event->y >= VOLUME_BAR_Y && event->y <= VOLUME_BAR_Y + VOLUME_BAR_HEIGHT) {
-        float click_position = (float)(event->x - 50) / VOLUME_BAR_WIDTH;
-        if (click_position >= 0.0f && click_position <= 1.0f) {
-            player_state.volume = click_position;
-            printf("Volume set to: %.1f\n", player_state.volume);
-        }
-        return;
-    }
-    
-    // Playback control buttons
-    if (event->y >= BUTTON_Y && event->y <= BUTTON_Y + BUTTON_HEIGHT) {
-        int start_x = (800 - (BUTTON_WIDTH * 3 + BUTTON_SPACING * 2)) / 2;
-        if (event->x >= start_x && event->x <= start_x + BUTTON_WIDTH) {
+    int x = event->x;
+    int y = event->y;
+
+    // Handle clicks on the Play, Pause, Stop buttons
+    if (y >= BUTTON_Y && y <= BUTTON_Y + BUTTON_HEIGHT) {
+        if (x >= 50 && x <= 50 + BUTTON_WIDTH) {
             play();
-        } else if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && 
-                   event->x <= start_x + (BUTTON_WIDTH * 2 + BUTTON_SPACING)) {
+        } else if (x >= 50 + BUTTON_WIDTH + BUTTON_SPACING && x <= 50 + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
             pause();
-        } else if (event->x >= start_x + (BUTTON_WIDTH * 2 + BUTTON_SPACING * 2) && 
-                   event->x <= start_x + (BUTTON_WIDTH * 3 + BUTTON_SPACING * 2)) {
+        } else if (x >= 50 + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && x <= 50 + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {
             stop();
         }
     }
@@ -209,41 +207,24 @@ void play() {
     printf("Playing...\n");
 }
 
-void pause() {
-    player_state.playing = 0;
-    printf("Paused.\n");
-}
-
 void stop() {
     player_state.playing = 0;
     player_state.progress = 0.0f;
     printf("Stopped.\n");
 }
 
+void pause() {
+    player_state.playing = 0;
+    printf("Paused.\n");
+}
+
 void next_track() {
-    player_state.progress = 0.0f;
     printf("Next track...\n");
+    // Implement actual track switching if needed
 }
 
 void previous_track() {
-    player_state.progress = 0.0f;
     printf("Previous track...\n");
+    // Implement actual track switching if needed
 }
 
-void display_welcome_message(Display *display, Window window) {
-    GC gc = XCreateGC(display, window, 0, NULL);
-    XSetForeground(display, gc, WhitePixel(display, DefaultScreen(display)));
-    XSetBackground(display, gc, BlackPixel(display, DefaultScreen(display)));
-    
-    const char *welcome_text = "Welcome to XOpenPlayer!";
-    int text_length = strlen(welcome_text);
-    Font font = XLoadFont(display, "fixed");
-    XSetFont(display, gc, font);
-    
-    int text_width = XTextWidth(XQueryFont(display, font), welcome_text, text_length);
-    int x_position = (800 - text_width) / 2;
-    XDrawString(display, window, gc, x_position, 100, welcome_text, text_length);
-    
-    XUnloadFont(display, font);
-    XFreeGC(display, gc);
-}
