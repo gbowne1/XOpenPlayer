@@ -144,9 +144,41 @@ void handle_keypress(XKeyEvent *event) {
 }
 
 void handle_mouse_click(XButtonEvent *event) {
-    // Handle dynamic button clicking
-    // Example: Detect Play, Pause, Stop dynamically
-    // (Implementation follows similar adjustments as keypress handling)
+    int x = event->x; // Mouse click X coordinate
+    int y = event->y; // Mouse click Y coordinate
+
+    // Calculate button layout dynamically
+    int total_button_width = (100 * 3) + (20 * 2); // Total width of 3 buttons with spacing
+    int start_x = (800 - total_button_width) / 2; // Center buttons horizontally (default window width = 800)
+
+    // Check if the click is within the button area
+    if (y >= 150 && y <= 150 + 30) { // BUTTON_Y and BUTTON_HEIGHT
+        if (x >= start_x && x < start_x + 100) {
+            play(); // Clicked the "Play" button
+        } else if (x >= start_x + 120 && x < start_x + 220) {
+            pause(); // Clicked the "Pause" button
+        } else if (x >= start_x + 240 && x < start_x + 340) {
+            stop(); // Clicked the "Stop" button
+        }
+    }
+
+    // Check if the click is within the Volume Bar area
+    if (y >= 280 && y <= 280 + 5) { // VOLUME_BAR_Y and VOLUME_BAR_HEIGHT
+        if (x >= 50 && x <= 50 + 100) { // VOLUME_BAR_WIDTH
+            float click_position = (float)(x - 50) / 100.0f; // Normalize to 0.0 - 1.0
+            player_state.volume = fmax(0.0f, fmin(1.0f, click_position)); // Clamp volume
+            printf("Volume updated to: %.2f\n", player_state.volume);
+        }
+    }
+
+    // Check if the click is within the Progress Bar area
+    if (y >= 250 && y <= 250 + 10) { // PROGRESS_BAR_Y and PROGRESS_BAR_HEIGHT
+        if (x >= 50 && x <= 750) { // Dynamic width based on window size (700px usable width)
+            float progress_position = (float)(x - 50) / 700.0f; // Normalize to 0.0 - 1.0
+            player_state.progress = fmax(0.0f, fmin(1.0f, progress_position)); // Clamp progress
+            printf("Progress updated to: %.2f%%\n", player_state.progress * 100);
+        }
+    }
 }
 
 void play() {
