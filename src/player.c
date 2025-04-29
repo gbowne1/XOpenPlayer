@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 // Static variables
 static PlayerState player_state = {0, 0.5f, 0.0f}; // Initial state
@@ -208,4 +209,11 @@ void next_track() {
 void previous_track() {
     log_event("Previous track selected.");
     printf("Previous track...\n");
+}
+
+void display_welcome_message(Display *display, Window window) {
+    XSetForeground(display, global_gc, WhitePixel(display, DefaultScreen(display)));
+    const char *message = "Welcome to XOpenPlayer!";
+    int text_width = XTextWidth(font_info, message, strlen(message));
+    XDrawString(display, window, global_gc, (800 - text_width) / 2, 100, message, strlen(message));
 }
