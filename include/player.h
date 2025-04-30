@@ -41,11 +41,11 @@
 
 
 // Player state structure
-struct PlayerState {
+typedef struct PlayerState {
     int playing;
     float volume;
     float progress;
-};
+} PlayerState;
 
 // Core player functions
 void init_player(Display *display, Window window);
