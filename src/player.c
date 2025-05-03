@@ -1,5 +1,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+// #include <X11/extensions/XShm.h>
+// #include <X11/XKBlib.h>
 #include "../include/player.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -100,29 +102,26 @@ void draw_volume_control(Display *display, Window window) {
     XDrawString(display, window, global_gc, x, 270, "Volume", 6);
 }
 
-void draw_player_controls(Display *display, Window window) {
-    // Dynamic button layout
-    int total_width = (100 * 3) + (20 * 2); // 3 buttons + spacing
-    int start_x = (800 - total_width) / 2; // Centered layout (default width = 800)
+void draw_player_controls(Display *display, Window window, int width) {
+    int total_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
+    int start_x = (width - total_width) / 2;
 
-    draw_button(display, window, start_x, 150, "Play");
-    draw_button(display, window, start_x + 120, 150, "Pause");
-    draw_button(display, window, start_x + 240, 150, "Stop");
+    draw_button(display, window, start_x, BUTTON_Y, "Play");
+    draw_button(display, window, start_x + BUTTON_WIDTH + BUTTON_SPACING, BUTTON_Y, "Pause");
+    draw_button(display, window, start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING), BUTTON_Y, "Stop");
 
-    draw_progress_bar(display, window, 800); // Default width
+    draw_progress_bar(display, window, width);
     draw_volume_control(display, window);
 }
 
-void draw_menu(Display *display, Window window) {
-    // Draw menu background
+void draw_menu(Display *display, Window window, int width) {
     XSetForeground(display, global_gc, BlackPixel(display, DefaultScreen(display)));
-    XFillRectangle(display, window, global_gc, 0, 0, 800, 40);
+    XFillRectangle(display, window, global_gc, 0, 0, width, MENU_HEIGHT);
 
-    // Draw menu items
     const char *menu_items[] = {"File", "Edit", "Help"};
     for (int i = 0; i < 3; i++) {
         int text_width = XTextWidth(font_info, menu_items[i], strlen(menu_items[i]));
-        int x_position = i * 100 + (100 - text_width) / 2;
+        int x_position = i * MENU_ITEM_WIDTH + (MENU_ITEM_WIDTH - text_width) / 2;
         XDrawString(display, window, global_gc, x_position, 25, menu_items[i], strlen(menu_items[i]));
     }
 }
@@ -211,9 +210,9 @@ void previous_track() {
     printf("Previous track...\n");
 }
 
-void display_welcome_message(Display *display, Window window) {
+void display_welcome_message(Display *display, Window window, int width) {
     XSetForeground(display, global_gc, WhitePixel(display, DefaultScreen(display)));
     const char *message = "Welcome to XOpenPlayer!";
     int text_width = XTextWidth(font_info, message, strlen(message));
-    XDrawString(display, window, global_gc, (800 - text_width) / 2, 100, message, strlen(message));
+    XDrawString(display, window, global_gc, (width - text_width) / 2, 100, message, strlen(message));
 }

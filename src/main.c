@@ -1,5 +1,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
+// #include <X11/Xresource.h>
+// #include <X11/extensions/Xrandr.h>
+// #include <X11/extensions/Xcursor.h>
+// #include <X11/extensions/Xinerama.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +13,8 @@
 
 // Enum for standardized error codes
 enum ErrorCode {
+    SUCCESS = 0,
+    ERR_UNKNOWN = -1,
     ERR_DISPLAY = 1,
     ERR_WINDOW_CREATION
 };
@@ -81,10 +89,12 @@ int main() {
     while (1) {
         XNextEvent(display, &event);
         if (event.type == Expose) {
-            draw_menu(display, window);
-            display_welcome_message(display, window);
+            draw_menu(display, window, window_width);
+            display_welcome_message(display, window, window_width);
+            draw_player_controls(display, window, window_width);
             log_event("Expose event handled.");
-        } else if (event.type == KeyPress) {
+        }        
+         else if (event.type == KeyPress) {
             handle_keypress(&event.xkey);
             log_event("KeyPress event handled.");
         } else if (event.type == ButtonPress) {
@@ -97,10 +107,12 @@ int main() {
                 break;
             }
         } else if (event.type == ConfigureNotify) {
-            // Handle window resize events
             window_width = event.xconfigure.width;
             window_height = event.xconfigure.height;
             printf("Window resized to: %d x %d\n", window_width, window_height);
+            draw_menu(display, window, window_width);
+            display_welcome_message(display, window, window_width);
+            draw_player_controls(display, window, window_width);
             log_event("ConfigureNotify (resize) event handled.");
         }
     }

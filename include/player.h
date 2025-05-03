@@ -49,9 +49,8 @@ typedef struct PlayerState {
 
 // Core player functions
 void init_player(Display *display, Window window);
-void draw_menu(Display *display, Window window);
-void display_welcome_message(Display *display, Window window);
-
+void draw_menu(Display *display, Window window, int width);
+void display_welcome_message(Display *display, Window window, int width);
 // Event handlers
 void handle_keypress(XKeyEvent *event);
 void handle_mouse_click(XButtonEvent *event);
@@ -68,6 +67,9 @@ void previous_track(void);
 void draw_button(Display *display, Window window, int x, int y, const char *label);
 void draw_progress_bar(Display *display, Window window, int width);
 void draw_volume_control(Display *display, Window window);
-void draw_player_controls(Display *display, Window window);
+void draw_player_controls(Display *display, Window window, int width);
+
 
 #endif // PLAYER_H
+
+
