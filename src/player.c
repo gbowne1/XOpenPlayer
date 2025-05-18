@@ -14,10 +14,13 @@ static GC global_gc;                               // Global graphics context
 static Font global_font;                           // Global font
 static XFontStruct *font_info;                     // Font metadata
 
-void log_event(const char *event_description) {
+void log_event(const char *message) {
     FILE *log = fopen("application_log.txt", "a");
     if (log) {
-        fprintf(log, "Event: %s\n", event_description);
+        time_t now = time(NULL);
+        struct tm *local = localtime(&now);
+        fprintf(log, "[%02d:%02d:%02d] Event: %s\n",
+                local->tm_hour, local->tm_min, local->tm_sec, message);
         fclose(log);
     } else {
         fprintf(stderr, "Warning: Unable to open log file.\n");
@@ -33,30 +36,33 @@ void init_player(Display *display, Window window) {
     // Create global graphics context
     global_gc = XCreateGC(display, window, 0, NULL);
     if (!global_gc) {
-        fprintf(stderr, "Error: Failed to create global graphics context.\n");
-        exit(1);
+        log_event("Error: Failed to create graphics context.");
+        fprintf(stderr, "Error: Failed to create graphics context.\n");
+        exit(EXIT_FAILURE);
     }
+
 
     // Load a global font
     global_font = XLoadFont(display, "fixed");
     font_info = XQueryFont(display, global_font);
     if (!font_info) {
+        log_event("Error: Failed to load font.");
         fprintf(stderr, "Error: Failed to load font.\n");
-        exit(1);
+        XFreeGC(display, global_gc);  // Clean up if font loading fails
+        exit(EXIT_FAILURE);
     }
 
     log_event("Player initialized successfully.");
 }
 
 void cleanup_player(Display *display) {
-    // Cleanup resources
     if (font_info) {
+        XFreeFont(display, font_info);
         XUnloadFont(display, global_font);
         log_event("Font unloaded.");
     }
     XFreeGC(display, global_gc);
     log_event("Graphics context freed.");
-    printf("Resources cleaned up.\n");
 }
 
 void draw_button(Display *display, Window window, int x, int y, const char *label) {
@@ -103,12 +109,14 @@ void draw_volume_control(Display *display, Window window) {
 }
 
 void draw_player_controls(Display *display, Window window, int width) {
-    int total_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
+    int button_width = width / 5;  // Adjust button width based on window size
+    int button_spacing = width / 20;  
+    int total_width = (button_width * 3) + (button_spacing * 2);
     int start_x = (width - total_width) / 2;
 
     draw_button(display, window, start_x, BUTTON_Y, "Play");
-    draw_button(display, window, start_x + BUTTON_WIDTH + BUTTON_SPACING, BUTTON_Y, "Pause");
-    draw_button(display, window, start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING), BUTTON_Y, "Stop");
+    draw_button(display, window, start_x + button_width + button_spacing, BUTTON_Y, "Pause");
+    draw_button(display, window, start_x + 2 * (button_width + button_spacing), BUTTON_Y, "Stop");
 
     draw_progress_bar(display, window, width);
     draw_volume_control(display, window);
