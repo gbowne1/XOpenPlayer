@@ -41,7 +41,6 @@ void init_player(Display *display, Window window) {
         exit(EXIT_FAILURE);
     }
 
-
     // Load a global font
     global_font = XLoadFont(display, "fixed");
     font_info = XQueryFont(display, global_font);

@@ -73,6 +73,17 @@ int main() {
     }
     log_event("Window created successfully.");
 
+    XSizeHints *size_hints = XAllocSizeHints();
+    if (size_hints) {
+        size_hints->flags = PMinSize | PBaseSize;
+        size_hints->min_width = 400;
+        size_hints->min_height = 300;
+        size_hints->base_width = 800;
+        size_hints->base_height = 600;
+        XSetWMNormalHints(display, window, size_hints);
+        XFree(size_hints);
+    }
+
     // Select input events for the window
     XSelectInput(display, window, ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask);
     XMapWindow(display, window);

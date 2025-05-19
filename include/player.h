@@ -39,7 +39,6 @@
 #define WINDOW_WIDTH        800
 #define WINDOW_HEIGHT       600
 
-
 // Player state structure
 typedef struct PlayerState {
     int playing;
@@ -69,7 +68,4 @@ void draw_progress_bar(Display *display, Window window, int width);
 void draw_volume_control(Display *display, Window window);
 void draw_player_controls(Display *display, Window window, int width);
 
-
 #endif // PLAYER_H
-
-
