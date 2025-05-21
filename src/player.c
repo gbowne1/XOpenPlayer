@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 // Static variables
 static PlayerState player_state = {0, 0.5f, 0.0f}; // Initial state
@@ -144,9 +145,9 @@ void handle_keypress(XKeyEvent *event) {
     } else if (keysym == XK_p) {
         previous_track();
     } else if (keysym == XK_Up) {
-        player_state.volume = fmin(player_state.volume + 0.1f, 1.0f);
+        player_state.volume = fminf(player_state.volume + 0.1f, 1.0f);
     } else if (keysym == XK_Down) {
-        player_state.volume = fmax(player_state.volume - 0.1f, 0.0f);
+        player_state.volume = fmaxf(player_state.volume - 0.1f, 0.0f);
     }
 }
 
@@ -173,7 +174,7 @@ void handle_mouse_click(XButtonEvent *event) {
     if (y >= 280 && y <= 280 + 5) { // VOLUME_BAR_Y and VOLUME_BAR_HEIGHT
         if (x >= 50 && x <= 50 + 100) { // VOLUME_BAR_WIDTH
             float click_position = (float)(x - 50) / 100.0f; // Normalize to 0.0 - 1.0
-            player_state.volume = fmax(0.0f, fmin(1.0f, click_position)); // Clamp volume
+            player_state.volume = fmaxf(0.0f, fminf(1.0f, click_position)); // Clamp volume
             printf("Volume updated to: %.2f\n", player_state.volume);
         }
     }
@@ -182,7 +183,7 @@ void handle_mouse_click(XButtonEvent *event) {
     if (y >= 250 && y <= 250 + 10) { // PROGRESS_BAR_Y and PROGRESS_BAR_HEIGHT
         if (x >= 50 && x <= 750) { // Dynamic width based on window size (700px usable width)
             float progress_position = (float)(x - 50) / 700.0f; // Normalize to 0.0 - 1.0
-            player_state.progress = fmax(0.0f, fmin(1.0f, progress_position)); // Clamp progress
+            player_state.progress = fmaxf(0.0f, fminf(1.0f, progress_position)); // Clamp progress
             printf("Progress updated to: %.2f%%\n", player_state.progress * 100);
         }
     }

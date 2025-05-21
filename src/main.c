@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 #include "../include/player.h"
 
 // Enum for standardized error codes
@@ -35,20 +37,6 @@ void handle_error(int error_code, Display *display) {
         XCloseDisplay(display);
     }
     exit(error_code);
-}
-
-// Logging function
-void log_event(const char *message) {
-    FILE *log = fopen("application_log.txt", "a");
-    if (log) {
-        time_t now = time(NULL);
-        struct tm *local = localtime(&now);
-        fprintf(log, "[%02d:%02d:%02d] Event: %s\n",
-                local->tm_hour, local->tm_min, local->tm_sec, message);
-        fclose(log);
-    } else {
-        fprintf(stderr, "Warning: Unable to open log file.\n");
-    }
 }
 
 int main() {
@@ -108,8 +96,7 @@ int main() {
             display_welcome_message(display, window, window_width);
             draw_player_controls(display, window, window_width);
             log_event("Expose event handled.");
-        }        
-         else if (event.type == KeyPress) {
+        } else if (event.type == KeyPress) {
             handle_keypress(&event.xkey);
             log_event("KeyPress event handled.");
         } else if (event.type == ButtonPress) {
@@ -124,13 +111,7 @@ int main() {
         } else if (event.type == ConfigureNotify) {
             window_width = event.xconfigure.width;
             window_height = event.xconfigure.height;
-            printf("Window resized to: %d x %d\n", window_width, window_height);
 
-            XClearWindow(display, window);
-
-            draw_menu(display, window, window_width);
-            display_welcome_message(display, window, window_width);
-            draw_player_controls(display, window, window_width);
             log_event("ConfigureNotify (resize) event handled.");
         }
     }

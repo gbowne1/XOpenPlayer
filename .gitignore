@@ -6,3 +6,16 @@ Makefile
 CMakeLists.txt
 /build
 XOpenPlayer
+*.obj
+*.cpp.obj
+*.lib
+*.exe
+*.a
+*.ninja_deps
+*.ninja_log
+*.ninja
+*.cmake
+*.log
+/.idea/
+/cmake-build-release/
+/cmake-build-debug/

@@ -46,6 +46,8 @@ typedef struct PlayerState {
     float progress;
 } PlayerState;
 
+void log_event(const char *message);
+
 // Core player functions
 void init_player(Display *display, Window window);
 void draw_menu(Display *display, Window window, int width);
