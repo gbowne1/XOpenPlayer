@@ -95,6 +95,7 @@ int main() {
             draw_menu(display, window, window_width);
             display_welcome_message(display, window, window_width);
             draw_player_controls(display, window, window_width);
+            display_track_info(display, window, window_width);
             log_event("Expose event handled.");
         } else if (event.type == KeyPress) {
             handle_keypress(&event.xkey);
@@ -111,6 +112,7 @@ int main() {
         } else if (event.type == ConfigureNotify) {
             window_width = event.xconfigure.width;
             window_height = event.xconfigure.height;
+            handle_resize(window_width, window_height);
 
             log_event("ConfigureNotify (resize) event handled.");
         }

@@ -9,7 +9,14 @@ set(IS_ARCH_X86 FALSE)
 set(IS_ARCH_ARM64 FALSE)
 set(IS_ARCH_ARM FALSE)
 
-project(XOpenPlayer C)
+project(XOpenPlayer
+    VERSION 0.0.1
+    DESCRIPTION "A simple cross-platform music player"
+    HOMEPAGE_URL "https://github.com/gbowne1/XOpenPlayer"
+    LANGUAGES C
+)
+
+enable_language(C)
 
 if (${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows")
     set(IS_OS_WINDOWS TRUE)

@@ -43,19 +43,13 @@
 #define WINDOW_WIDTH        800
 #define WINDOW_HEIGHT       600
 
-// Player state structure
-typedef struct PlayerState {
-    int playing;
-    float volume;
-    float progress;
-} PlayerState;
-
-typedef struct TrackInfo {
-    char title[MAX_TITLE_LEN];
-    char artist[MAX_ARTIST_LEN];
-    int duration_seconds; // For display/progress bar
+typedef struct {
+    char title[100];
+    char artist[100];
+    int duration_seconds;
 } TrackInfo;
 
+// Player state structure
 typedef struct PlayerState {
     int playing;
     float volume;
@@ -64,6 +58,18 @@ typedef struct PlayerState {
     int track_count;
     TrackInfo tracks[MAX_TRACKS];
 } PlayerState;
+
+typedef struct TrackInfo {
+    char title[MAX_TITLE_LEN];
+    char artist[MAX_ARTIST_LEN];
+    int duration_seconds; // For display/progress bar
+} TrackInfo;
+
+typedef struct {
+    char title[100];
+    char artist[100];
+    int duration_seconds;
+} TrackInfo;
 
 void log_event(const char *message);
 
@@ -75,6 +81,8 @@ void display_welcome_message(Display *display, Window window, int width);
 void handle_keypress(XKeyEvent *event);
 void handle_mouse_click(XButtonEvent *event);
 void cleanup_player(Display *display);
+
+void handle_resize(int new_width, int new_height);
 
 // Playback control functions
 void play(void);

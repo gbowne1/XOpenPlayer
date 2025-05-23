@@ -125,15 +125,39 @@ void draw_player_controls(Display *display, Window window, int width) {
 }
 
 void draw_menu(Display *display, Window window, int width) {
-    XSetForeground(display, global_gc, BlackPixel(display, DefaultScreen(display)));
-    XFillRectangle(display, window, global_gc, 0, 0, width, MENU_HEIGHT);
+    // Create and set up graphics context
+    GC gc = XCreateGC(display, window, 0, NULL);
+    if (!gc) {
+        log_event("Error: Failed to create graphics context for menu");
+        return;
+    }
 
+    // Set up font
+    Font font = XLoadFont(display, "fixed");
+    if (!font) {
+        XFreeGC(display, gc);
+        log_event("Error: Failed to load font");
+        return;
+    }
+
+    // Set background and text colors
+    XSetBackground(display, gc, WhitePixel(display, DefaultScreen(display)));
+    XSetForeground(display, gc, BlackPixel(display, DefaultScreen(display)));
+    
+    // Draw menu background
+    XFillRectangle(display, window, gc, 0, 0, width, MENU_HEIGHT);
+    
+    // Draw menu items
     const char *menu_items[] = {"File", "Edit", "Help"};
     for (int i = 0; i < 3; i++) {
         int text_width = XTextWidth(font_info, menu_items[i], strlen(menu_items[i]));
         int x_position = i * MENU_ITEM_WIDTH + (MENU_ITEM_WIDTH - text_width) / 2;
-        XDrawString(display, window, global_gc, x_position, 25, menu_items[i], strlen(menu_items[i]));
+        XDrawString(display, window, gc, x_position, 25, menu_items[i], strlen(menu_items[i]));
     }
+
+    // Cleanup
+    XFreeFont(display, font);
+    XFreeGC(display, gc);
 }
 
 void handle_keypress(XKeyEvent *event) {
@@ -211,13 +235,21 @@ void pause() {
 }
 
 void next_track() {
-    log_event("Next track selected.");
-    printf("Next track...\n");
+    if (player_state.track_count > 0) {
+        player_state.current_track = (player_state.current_track + 1) % player_state.track_count;
+        player_state.progress = 0.0f; // Reset progress
+        log_event("Next track selected.");
+        printf("Switched to next track: %s\n", player_state.tracks[player_state.current_track].title);
+    }
 }
 
 void previous_track() {
-    log_event("Previous track selected.");
-    printf("Previous track...\n");
+    if (player_state.track_count > 0) {
+        player_state.current_track = (player_state.current_track - 1 + player_state.track_count) % player_state.track_count;
+        player_state.progress = 0.0f;
+        log_event("Previous track selected.");
+        printf("Switched to previous track: %s\n", player_state.tracks[player_state.current_track].title);
+    }
 }
 
 void display_welcome_message(Display *display, Window window, int width) {
@@ -267,4 +299,16 @@ void handle_mouse_motion(XMotionEvent *event, int window_width) {
         float new_progress = (float)(x - 50) / (float)progress_bar_width;
         player_state.progress = fmaxf(0.0f, fminf(1.0f, new_progress));
     }
+}
+
+void handle_resize(int new_width, int new_height) {
+    // Currently, you don't need to store width/height,
+    // but you can use this to update layout or trigger redraws.
+
+    // Optionally log the new size
+    char log_msg[128];
+    snprintf(log_msg, sizeof(log_msg), "Window resized to %dx%d.", new_width, new_height);
+    log_event(log_msg);
+
+    // You could later add layout recalculations here if needed
 }
