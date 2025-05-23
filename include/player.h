@@ -23,6 +23,10 @@
 #define VOLUME_BAR_HEIGHT   5
 #define VOLUME_BAR_Y        280
 
+#define MAX_TRACKS 100
+#define MAX_TITLE_LEN 128
+#define MAX_ARTIST_LEN 64
+
 // =====================
 // Keyboard Input Constants
 // =====================
@@ -44,6 +48,21 @@ typedef struct PlayerState {
     int playing;
     float volume;
     float progress;
+} PlayerState;
+
+typedef struct TrackInfo {
+    char title[MAX_TITLE_LEN];
+    char artist[MAX_ARTIST_LEN];
+    int duration_seconds; // For display/progress bar
+} TrackInfo;
+
+typedef struct PlayerState {
+    int playing;
+    float volume;
+    float progress;
+    int current_track;
+    int track_count;
+    TrackInfo tracks[MAX_TRACKS];
 } PlayerState;
 
 void log_event(const char *message);
@@ -69,5 +88,8 @@ void draw_button(Display *display, Window window, int x, int y, const char *labe
 void draw_progress_bar(Display *display, Window window, int width);
 void draw_volume_control(Display *display, Window window);
 void draw_player_controls(Display *display, Window window, int width);
+
+void handle_mouse_release(XButtonEvent *event);
+void handle_mouse_motion(XMotionEvent *event, int window_width);
 
 #endif // PLAYER_H

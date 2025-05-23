@@ -14,6 +14,8 @@ static PlayerState player_state = {0, 0.5f, 0.0f}; // Initial state
 static GC global_gc;                               // Global graphics context
 static Font global_font;                           // Global font
 static XFontStruct *font_info;                     // Font metadata
+static int dragging_volume = 0;
+static int dragging_progress = 0;
 
 void log_event(const char *message) {
     FILE *log = fopen("application_log.txt", "a");
@@ -223,4 +225,46 @@ void display_welcome_message(Display *display, Window window, int width) {
     const char *message = "Welcome to XOpenPlayer!";
     int text_width = XTextWidth(font_info, message, strlen(message));
     XDrawString(display, window, global_gc, (width - text_width) / 2, 100, message, strlen(message));
+}
+
+void load_tracks(const char *filename) {
+    FILE *f = fopen(filename, "r");
+    if (!f) return;
+    player_state.track_count = 0;
+    while (fscanf(f, "%127[^\t]\t%63[^\t]\t%d\n",
+                  player_state.tracks[player_state.track_count].title,
+                  player_state.tracks[player_state.track_count].artist,
+                  &player_state.tracks[player_state.track_count].duration_seconds) == 3) {
+        player_state.track_count++;
+        if (player_state.track_count >= MAX_TRACKS) break;
+    }
+    fclose(f);
+}
+
+void display_track_info(Display *display, Window window, int width) {
+    if (player_state.track_count == 0) return;
+    TrackInfo *track = &player_state.tracks[player_state.current_track];
+    char info[256];
+    snprintf(info, sizeof(info), "Now Playing: %s - %s [%d:%02d]",
+             track->title, track->artist, track->duration_seconds/60, track->duration_seconds%60);
+    int text_width = XTextWidth(font_info, info, strlen(info));
+    XDrawString(display, window, global_gc, (width - text_width) / 2, 130, info, strlen(info));
+}
+
+void handle_mouse_release(XButtonEvent *event) {
+    dragging_volume = 0;
+    dragging_progress = 0;
+}
+
+void handle_mouse_motion(XMotionEvent *event, int window_width) {
+    int x = event->x;
+    if (dragging_volume) {
+        float new_volume = (float)(x - 50) / 100.0f;
+        player_state.volume = fmaxf(0.0f, fminf(1.0f, new_volume));
+    }
+    if (dragging_progress) {
+        int progress_bar_width = window_width - 100;
+        float new_progress = (float)(x - 50) / (float)progress_bar_width;
+        player_state.progress = fmaxf(0.0f, fminf(1.0f, new_progress));
+    }
 }
