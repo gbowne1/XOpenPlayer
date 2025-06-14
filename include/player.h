@@ -44,6 +44,13 @@
 #define WINDOW_HEIGHT       600
 
 typedef struct {
+    GC gc;
+    Font font;
+    XFontStruct *font_info;
+    Atom wm_delete_window;
+} ResourceManager;
+
+typedef struct {
     char title[MAX_TITLE_LEN];
     char artist[MAX_ARTIST_LEN];
     int duration_seconds; // For display/progress bar
@@ -69,6 +76,7 @@ void display_welcome_message(Display *display, Window window, int width);
 // Event handlers
 void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width);
 void handle_mouse_click(XButtonEvent *event, int window_width);
+void cleanup_resources(ResourceManager *resources, Display *display);
 void cleanup_player(Display *display);
 
 void handle_resize(int new_width, int new_height);

@@ -57,6 +57,17 @@ void init_player(Display *display, Window window) {
     log_event("Player initialized successfully.");
 }
 
+void cleanup_resources(ResourceManager *resources, Display *display) {
+    if (resources->font_info) {
+        XFreeFont(display, resources->font_info);
+        XUnloadFont(display, resources->font);
+    }
+    if (resources->gc) {
+        XFreeGC(display, resources->gc);
+    }
+    // Clean up other resources...
+}
+
 void cleanup_player(Display *display) {
     if (font_info) {
         XFreeFont(display, font_info);
@@ -175,10 +186,10 @@ void handle_keypress(XKeyEvent *event, Display *display, Window window, int wind
     }
 }
 
-void handle_mouse_click(XButtonEvent *event, int ) {
+void handle_mouse_click(XButtonEvent *event, int window_width) {
     // Calculate button positions dynamically
     int total_button_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
-    int start_x = (800 - total_button_width) / 2;
+    int start_x = (window_width - total_button_width) / 2;
 
     // Check if the click is within the button area
     if (event->y >= BUTTON_Y && event->y <= BUTTON_Y + BUTTON_HEIGHT) {
@@ -194,11 +205,12 @@ void handle_mouse_click(XButtonEvent *event, int ) {
     // Handle volume and progress bar clicks
     if (event->y >= PROGRESS_BAR_Y && event->y <= PROGRESS_BAR_Y + PROGRESS_BAR_HEIGHT) {
         // Update progress
-        float progress_position = (float)(event->x - 50) / 700.0f;
+        int progress_bar_width = window_width - 100;
+        float progress_position = (float)(event->x - 50) / (float)progress_bar_width;
         player_state.progress = fmaxf(0.0f, fminf(1.0f, progress_position));
     } else if (event->y >= VOLUME_BAR_Y && event->y <= VOLUME_BAR_Y + VOLUME_BAR_HEIGHT) {
         // Update volume
-        float volume_position = (float)(event->x - 50) / 100.0f;
+        float volume_position = (float)(event->x - 50) / VOLUME_BAR_WIDTH;
         player_state.volume = fmaxf(0.0f, fminf(1.0f, volume_position));
     }
 }
