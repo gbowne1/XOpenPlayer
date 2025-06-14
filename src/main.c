@@ -98,7 +98,7 @@ int main() {
             display_track_info(display, window, window_width);
             log_event("Expose event handled.");
         } else if (event.type == KeyPress) {
-            handle_keypress(&event.xkey);
+            handle_keypress(&event.xkey, display, window, window_width);
             log_event("KeyPress event handled.");
         } else if (event.type == ButtonPress) {
             handle_mouse_click(&event.xbutton);

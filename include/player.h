@@ -44,9 +44,9 @@
 #define WINDOW_HEIGHT       600
 
 typedef struct {
-    char title[100];
-    char artist[100];
-    int duration_seconds;
+    char title[MAX_TITLE_LEN];
+    char artist[MAX_ARTIST_LEN];
+    int duration_seconds; // For display/progress bar
 } TrackInfo;
 
 // Player state structure
@@ -59,17 +59,6 @@ typedef struct PlayerState {
     TrackInfo tracks[MAX_TRACKS];
 } PlayerState;
 
-typedef struct TrackInfo {
-    char title[MAX_TITLE_LEN];
-    char artist[MAX_ARTIST_LEN];
-    int duration_seconds; // For display/progress bar
-} TrackInfo;
-
-typedef struct {
-    char title[100];
-    char artist[100];
-    int duration_seconds;
-} TrackInfo;
 
 void log_event(const char *message);
 
@@ -78,7 +67,7 @@ void init_player(Display *display, Window window);
 void draw_menu(Display *display, Window window, int width);
 void display_welcome_message(Display *display, Window window, int width);
 // Event handlers
-void handle_keypress(XKeyEvent *event);
+void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width);
 void handle_mouse_click(XButtonEvent *event);
 void cleanup_player(Display *display);
 
@@ -88,8 +77,8 @@ void handle_resize(int new_width, int new_height);
 void play(void);
 void pause(void);
 void stop(void);
-void next_track(void);
-void previous_track(void);
+void next_track(Display *display, Window window, int window_width);
+void previous_track(Display *display, Window window, int window_width);
 
 // UI drawing functions
 void draw_button(Display *display, Window window, int x, int y, const char *label);

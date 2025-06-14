@@ -111,14 +111,12 @@ void draw_volume_control(Display *display, Window window) {
 }
 
 void draw_player_controls(Display *display, Window window, int width) {
-    int button_width = width / 5;  // Adjust button width based on window size
-    int button_spacing = width / 20;  
-    int total_width = (button_width * 3) + (button_spacing * 2);
-    int start_x = (width - total_width) / 2;
+    int total_button_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
+    int start_x = (width - total_button_width) / 2;
 
     draw_button(display, window, start_x, BUTTON_Y, "Play");
-    draw_button(display, window, start_x + button_width + button_spacing, BUTTON_Y, "Pause");
-    draw_button(display, window, start_x + 2 * (button_width + button_spacing), BUTTON_Y, "Stop");
+    draw_button(display, window, start_x + BUTTON_WIDTH + BUTTON_SPACING, BUTTON_Y, "Pause");
+    draw_button(display, window, start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING), BUTTON_Y, "Stop");
 
     draw_progress_bar(display, window, width);
     draw_volume_control(display, window);
@@ -160,16 +158,16 @@ void draw_menu(Display *display, Window window, int width) {
     XFreeGC(display, gc);
 }
 
-void handle_keypress(XKeyEvent *event) {
-    KeySym keysym = XLookupKeysym(event, 0);
+void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width) {
+    KeySym keysym = XLookupKeysym(event, event->state);
     if (keysym == XK_space) {
         play();
     } else if (keysym == XK_s) {
         stop();
     } else if (keysym == XK_n) {
-        next_track();
+        next_track(display, window, window_width); // Pass window_width
     } else if (keysym == XK_p) {
-        previous_track();
+        previous_track(display, window, window_width); // Pass window_width
     } else if (keysym == XK_Up) {
         player_state.volume = fminf(player_state.volume + 0.1f, 1.0f);
     } else if (keysym == XK_Down) {
@@ -178,40 +176,30 @@ void handle_keypress(XKeyEvent *event) {
 }
 
 void handle_mouse_click(XButtonEvent *event) {
-    int x = event->x; // Mouse click X coordinate
-    int y = event->y; // Mouse click Y coordinate
-
-    // Calculate button layout dynamically
-    int total_button_width = (100 * 3) + (20 * 2); // Total width of 3 buttons with spacing
-    int start_x = (800 - total_button_width) / 2; // Center buttons horizontally (default window width = 800)
+    // Calculate button positions dynamically
+    int total_button_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
+    int start_x = (800 - total_button_width) / 2;
 
     // Check if the click is within the button area
-    if (y >= 150 && y <= 150 + 30) { // BUTTON_Y and BUTTON_HEIGHT
-        if (x >= start_x && x < start_x + 100) {
+    if (event->y >= BUTTON_Y && event->y <= BUTTON_Y + BUTTON_HEIGHT) {
+        if (event->x >= start_x && event->x < start_x + BUTTON_WIDTH) {
             play(); // Clicked the "Play" button
-        } else if (x >= start_x + 120 && x < start_x + 220) {
+        } else if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && event->x < start_x + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
             pause(); // Clicked the "Pause" button
-        } else if (x >= start_x + 240 && x < start_x + 340) {
+        } else if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && event->x < start_x + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {
             stop(); // Clicked the "Stop" button
         }
     }
 
-    // Check if the click is within the Volume Bar area
-    if (y >= 280 && y <= 280 + 5) { // VOLUME_BAR_Y and VOLUME_BAR_HEIGHT
-        if (x >= 50 && x <= 50 + 100) { // VOLUME_BAR_WIDTH
-            float click_position = (float)(x - 50) / 100.0f; // Normalize to 0.0 - 1.0
-            player_state.volume = fmaxf(0.0f, fminf(1.0f, click_position)); // Clamp volume
-            printf("Volume updated to: %.2f\n", player_state.volume);
-        }
-    }
-
-    // Check if the click is within the Progress Bar area
-    if (y >= 250 && y <= 250 + 10) { // PROGRESS_BAR_Y and PROGRESS_BAR_HEIGHT
-        if (x >= 50 && x <= 750) { // Dynamic width based on window size (700px usable width)
-            float progress_position = (float)(x - 50) / 700.0f; // Normalize to 0.0 - 1.0
-            player_state.progress = fmaxf(0.0f, fminf(1.0f, progress_position)); // Clamp progress
-            printf("Progress updated to: %.2f%%\n", player_state.progress * 100);
-        }
+    // Handle volume and progress bar clicks
+    if (event->y >= PROGRESS_BAR_Y && event->y <= PROGRESS_BAR_Y + PROGRESS_BAR_HEIGHT) {
+        // Update progress
+        float progress_position = (float)(event->x - 50) / 700.0f;
+        player_state.progress = fmaxf(0.0f, fminf(1.0f, progress_position));
+    } else if (event->y >= VOLUME_BAR_Y && event->y <= VOLUME_BAR_Y + VOLUME_BAR_HEIGHT) {
+        // Update volume
+        float volume_position = (float)(event->x - 50) / 100.0f;
+        player_state.volume = fmaxf(0.0f, fminf(1.0f, volume_position));
     }
 }
 
@@ -228,27 +216,38 @@ void stop() {
     printf("Stopped.\n");
 }
 
+void next_track(Display *display, Window window, int window_width)
+{
+    if (player_state.track_count > 0) {
+        player_state.current_track = (player_state.current_track + 1) % player_state.track_count;
+        player_state.progress = 0.0f; // Reset progress
+        log_event("Next track selected.");
+        // Trigger a redraw to update the track info
+        XClearWindow(display, window);
+        draw_menu(display, window, window_width);
+        display_welcome_message(display, window, window_width);
+        draw_player_controls(display, window, window_width);
+        display_track_info(display, window, window_width);
+    }
+}
+
 void pause() {
     player_state.playing = 0;
     log_event("Playback paused.");
     printf("Paused.\n");
 }
 
-void next_track() {
-    if (player_state.track_count > 0) {
-        player_state.current_track = (player_state.current_track + 1) % player_state.track_count;
-        player_state.progress = 0.0f; // Reset progress
-        log_event("Next track selected.");
-        printf("Switched to next track: %s\n", player_state.tracks[player_state.current_track].title);
-    }
-}
-
-void previous_track() {
+void previous_track(Display *display, Window window, int window_width) {
     if (player_state.track_count > 0) {
         player_state.current_track = (player_state.current_track - 1 + player_state.track_count) % player_state.track_count;
         player_state.progress = 0.0f;
         log_event("Previous track selected.");
-        printf("Switched to previous track: %s\n", player_state.tracks[player_state.current_track].title);
+        // Trigger a redraw to update the track info
+        XClearWindow(display, window);
+        draw_menu(display, window, window_width);
+        display_welcome_message(display, window, window_width);
+        draw_player_controls(display, window, window_width);
+        display_track_info(display, window, window_width);
     }
 }
 
