@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <time.h>
 #include <stdint.h>
+#include <stdio.h>
 
 void log_event(const char *message) {
     FILE *log = fopen("application_log.txt", "a");

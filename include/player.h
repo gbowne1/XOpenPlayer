@@ -68,7 +68,7 @@ void draw_menu(Display *display, Window window, int width);
 void display_welcome_message(Display *display, Window window, int width);
 // Event handlers
 void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width);
-void handle_mouse_click(XButtonEvent *event);
+void handle_mouse_click(XButtonEvent *event, int window_width);
 void cleanup_player(Display *display);
 
 void handle_resize(int new_width, int new_height);

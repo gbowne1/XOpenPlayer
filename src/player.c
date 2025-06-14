@@ -141,10 +141,10 @@ void draw_menu(Display *display, Window window, int width) {
     // Set background and text colors
     XSetBackground(display, gc, WhitePixel(display, DefaultScreen(display)));
     XSetForeground(display, gc, BlackPixel(display, DefaultScreen(display)));
-    
+
     // Draw menu background
     XFillRectangle(display, window, gc, 0, 0, width, MENU_HEIGHT);
-    
+
     // Draw menu items
     const char *menu_items[] = {"File", "Edit", "Help"};
     for (int i = 0; i < 3; i++) {
@@ -175,7 +175,7 @@ void handle_keypress(XKeyEvent *event, Display *display, Window window, int wind
     }
 }
 
-void handle_mouse_click(XButtonEvent *event) {
+void handle_mouse_click(XButtonEvent *event, int ) {
     // Calculate button positions dynamically
     int total_button_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
     int start_x = (800 - total_button_width) / 2;

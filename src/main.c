@@ -81,6 +81,9 @@ int main() {
     init_player(display, window);
     log_event("Player initialized.");
 
+    load_tracks("tracks.txt");
+    log_event("Tracks loaded.");
+
     // Support for closing the window
     Atom wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
     XSetWMProtocols(display, window, &wmDeleteWindow, 1);
@@ -101,7 +104,7 @@ int main() {
             handle_keypress(&event.xkey, display, window, window_width);
             log_event("KeyPress event handled.");
         } else if (event.type == ButtonPress) {
-            handle_mouse_click(&event.xbutton);
+            handle_mouse_click(&event.xbutton, window_width);
             log_event("ButtonPress event handled.");
         } else if (event.type == ClientMessage) {
             if ((long)event.xclient.data.l[0] == (long)wmDeleteWindow) {
