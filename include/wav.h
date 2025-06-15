@@ -1,10 +1,12 @@
+#define _XOPEN_SOURCE 600
+
 #ifndef WAV_H
 #define WAV_H
 
 #include <stdio.h>
 #include <stdint.h>
 
-// WAV file header structure
+/* WAV file header structure */
 typedef struct {
     char riff[4];
     uint32_t file_size;
@@ -21,9 +23,10 @@ typedef struct {
     uint32_t data_size;
 } WAVHeader;
 
-// Function declarations
+/* Function declarations */
 void read_wav_header(FILE *file, WAVHeader *header);
 void *read_pcm_data(FILE *file, uint32_t data_size);
 void play_wav(const char *filename);
 
-#endif // WAV_H
+#endif
+/* WAV_H */
