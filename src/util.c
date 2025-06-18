@@ -44,6 +44,7 @@ uint32_t swap_endian32(uint32_t value) {
 
 uint16_t swap_endian16(uint16_t value) {
     uint16_t ret = (value >> 8) | (value << 8);
+    return ret;
 }
 
 float clamp(float value, float min, float max) {

@@ -160,3 +160,4 @@ int main(void) {
     log_event("Application terminated successfully.");
     return 0;
 }
+

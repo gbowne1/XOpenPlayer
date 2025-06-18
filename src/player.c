@@ -429,3 +429,4 @@ void handle_resize(int new_width, int new_height) {
 
     /* You could later add layout recalculations here if needed */
 }
+
