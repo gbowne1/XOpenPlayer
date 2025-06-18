@@ -2,7 +2,6 @@
 /.vscode
 .vscode/
 .vscode/**
-Makefile
 CMakeLists.txt
 /build
 XOpenPlayer

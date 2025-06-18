@@ -22,8 +22,9 @@ XOpenPlayer currently has basic X11 window management and simple UI controls. Th
 - [ ] Options for enhancing video quality (e.g., de-interlacing, sharpening)
 - [ ] Options for loading, editing, and styling subtitles
 - [ ] Ability to bookmark specific moments in a video or audio track
-- [ ] A feature to view recently played media
-
+- [ ] A feature to view recently played media 
+- [ ] Support track list // playlist files .m3u, .pls, .wpl, .asx, .cue
+- [ ] Support for .mp3, .mp4, .wav, .ogg, .wma, 
 ### High Priority
 
 - [ ] Implement proper window resize handling

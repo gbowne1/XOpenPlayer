@@ -1,0 +1,7 @@
+Language: Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+BreakBeforeBraces: Attach
+ColumnLimit: 0

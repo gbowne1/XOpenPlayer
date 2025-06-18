@@ -1,3 +1,4 @@
+
 /*********************************************************************
  * The Open Group Base Specifications Issue 6
  * IEEE Std 1003.1, 2004 Edition
@@ -24,7 +25,7 @@
 #include <math.h>
 #include <time.h>
 #include "player.h"
-#include "utils.h"
+#include "util.h"
 
 /* Initial state */
 /* the wild Greek has proclaimed that we can get away from this

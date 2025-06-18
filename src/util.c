@@ -1,3 +1,4 @@
+
 /*********************************************************************
  * The Open Group Base Specifications Issue 6
  * IEEE Std 1003.1, 2004 Edition
@@ -16,7 +17,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "utils.h"
+#include "util.h"
 
 void log_event(const char *message) {
     time_t now;

@@ -1,3 +1,4 @@
+
 /*********************************************************************
  * The Open Group Base Specifications Issue 6
  * IEEE Std 1003.1, 2004 Edition
@@ -28,7 +29,7 @@
 #include <time.h>
 
 #include "player.h"
-#include "utils.h"
+#include "util.h"
 
 /* Enum for standardized error codes */
 enum ErrorCode {
