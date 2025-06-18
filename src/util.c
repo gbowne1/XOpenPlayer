@@ -35,16 +35,19 @@ void log_event(const char *message) {
 }
 
 uint32_t swap_endian32(uint32_t value) {
-    return ((value >> 24) & 0xFF) |
-           ((value >> 8)  & 0xFF00) |
-           ((value << 8)  & 0xFF0000) |
-           ((value << 24) & 0xFF000000);
+    uint32_t ret = ((value >> 24) & 0xFF) |
+                   ((value >> 8)  & 0xFF00) |
+                   ((value << 8)  & 0xFF0000) |
+                   ((value << 24) & 0xFF000000);
+    return ret;
 }
 
 uint16_t swap_endian16(uint16_t value) {
-    return (value >> 8) | (value << 8);
+    uint16_t ret = (value >> 8) | (value << 8);
 }
 
 float clamp(float value, float min, float max) {
-    return (value < min) ? min : (value > max) ? max : value;
-}
+    float r0 = (value > max) ? max : value;
+    float r1 = (value < min) ? min : r0;
+    return r1;
+} 
