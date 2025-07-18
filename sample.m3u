@@ -1,0 +1,7 @@
+#EXTM3U
+#EXTINF:213,Song One - Artist A
+/home/user/music/song1.wav
+#EXTINF:185,Song Two - Artist B
+song2.wav
+#EXTINF:300,Song Three - Artist C
+/home/user/music/song3.wav

@@ -28,11 +28,6 @@ struct Track {
     int duration_seconds; // Duration in seconds
 };
 
-struct PlayerState {
-    struct Track tracks[MAX_TRACKS];
-    int track_count;
-};
-
 extern struct PlayerState player_state;
 
 // Public playlist functions

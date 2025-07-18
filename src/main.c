@@ -82,8 +82,8 @@ int main(void) {
                                  BlackPixel(display, screen),
                                  WhitePixel(display, screen));
 
-    if (!window) {
-        handle_error(ERR_WINDOW_CREATION, display);
+    if (!XMapWindow(display, window)) {
+    handle_error(ERR_WINDOW_CREATION, display);
     }
     log_event("X11 Window created");
 
@@ -100,8 +100,8 @@ int main(void) {
 
     /* Select input events for the window */
     XSelectInput(display, window,
-                   ExposureMask | KeyPressMask
-                 | ButtonPressMask | StructureNotifyMask);
+             ExposureMask | KeyPressMask | ButtonPressMask |
+             ButtonReleaseMask | PointerMotionMask | StructureNotifyMask);
 
     XMapWindow(display, window);
     XStoreName(display, window, "XOpenPlayer");
@@ -150,6 +150,12 @@ int main(void) {
             handle_resize(window_width, window_height);
 
             log_event("ConfigureNotify (resize) event");
+        } else if (event.type == ButtonRelease) {
+            handle_mouse_release(&event.xbutton);
+            log_event("ButtonRelease event");
+        } else if (event.type == MotionNotify) {
+            handle_mouse_motion(&event.xmotion, window_width);
+            log_event("MotionNotify event");
         }
     }
 
