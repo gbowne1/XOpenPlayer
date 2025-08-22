@@ -10,6 +10,8 @@
 /* Logging utility */
 void log_event(const char *message);
 
+void cleanup_resources(Display *display, Window window);
+
 /* Endian conversion (if needed for WAV handling) */
 uint32_t swap_endian32(uint32_t value);
 uint16_t swap_endian16(uint16_t value);

@@ -81,22 +81,30 @@ int main(void) {
                                  10, 10, 800, 600, 1,
                                  BlackPixel(display, screen),
                                  WhitePixel(display, screen));
-
-    if (!XMapWindow(display, window)) {
-    handle_error(ERR_WINDOW_CREATION, display);
+    
+    if (!window) {
+        cleanup_resources(display, NULL);
+        handle_error(ERR_WINDOW_CREATION, display);
     }
     log_event("X11 Window created");
 
-    size_hints = XAllocSizeHints();
-    if (size_hints) {
-        size_hints->flags = PMinSize | PBaseSize;
-        size_hints->min_width = 400;
-        size_hints->min_height = 300;
-        size_hints->base_width = 800;
-        size_hints->base_height = 600;
-        XSetWMNormalHints(display, window, size_hints);
-        XFree(size_hints);
+    if (!XMapWindow(display, window)) {
+        cleanup_resources(display, window);
+        handle_error(ERR_WINDOW_CREATION, display);
     }
+    log_event("X11 Window mapped");
+
+    size_hints = XAllocSizeHints();
+    if (!size_hints) {
+        handle_error(ERR_UNKNOWN, display);
+    }
+    size_hints->flags = PMinSize | PBaseSize;
+    size_hints->min_width = 400;
+    size_hints->min_height = 300;
+    size_hints->base_width = 800;
+    size_hints->base_height = 600;
+    XSetWMNormalHints(display, window, size_hints);
+    XFree(size_hints);
 
     /* Select input events for the window */
     XSelectInput(display, window,
@@ -157,6 +165,7 @@ int main(void) {
             handle_mouse_motion(&event.xmotion, window_width);
             log_event("MotionNotify event");
         }
+        usleep(1000);
     }
 
     /* Cleanup resources */
