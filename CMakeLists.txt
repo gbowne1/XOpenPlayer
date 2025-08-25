@@ -45,10 +45,20 @@ elseif ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64" OR "${CMAKE_SYSTEM_PROCESSO
 endif ()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(XOpenPlayer
-        include/player.h src/player.c
-        src/main.c
+    src/main.c
+    src/player.c
+    src/audio.c
+    src/util.c
+    src/playlist.c
 )
+
+target_include_directories(XOpenPlayer PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
 
 target_link_libraries(XOpenPlayer PRIVATE X11 m)

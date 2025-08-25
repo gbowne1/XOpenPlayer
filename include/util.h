@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include <X11/Xlib.h>
+
 /* Logging utility */
 void log_event(const char *message);
 

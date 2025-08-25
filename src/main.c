@@ -14,6 +14,10 @@
 #define _XOPEN_SOURCE 600
 #endif
 
+#ifndef __int64
+#define __int64 long long
+#endif
+
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
@@ -27,6 +31,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+
 
 #include "player.h"
 #include "util.h"
@@ -53,6 +59,7 @@ void handle_error(int error_code, Display *display) {
         default:
             fprintf(stderr, "FAIL: unknown error\n");
     }
+    close_logging();
     if (display) {
         XCloseDisplay(display);
     }
@@ -65,6 +72,12 @@ int main(void) {
     XEvent event;
     XSizeHints *size_hints;
     Atom wmDeleteWindow;
+
+    if (init_logging("application_log.txt") != 0) {
+        fprintf(stderr, "ERROR: Failed to initialize logging\n");
+        return ERR_UNKNOWN;
+    }
+
     int screen, window_width, window_height;
 
     /* Open the display */
@@ -173,6 +186,9 @@ int main(void) {
     XDestroyWindow(display, window);
     XCloseDisplay(display);
     log_event("Application terminated successfully.");
+
+    close_logging();
+
     return 0;
 }
 

@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <time.h>
 #include "util.h"
 
 typedef enum {
@@ -42,7 +41,7 @@ int init_logging(const char *filename) {
     return 0;
 }
 
-void log_event(const char *message, LogLevel level) {
+void log_event(const char *message) {
     time_t now;
     time(&now);
     char *time_str = ctime(&now);
@@ -50,7 +49,7 @@ void log_event(const char *message, LogLevel level) {
 
     pthread_mutex_lock(&log_mutex);
     
-    struct tm *local = localtime(&now)
+    struct tm *local = localtime(&now);
     FILE *log = fopen("application_log.txt", "a");
     if (log) {
         now = time(NULL);
