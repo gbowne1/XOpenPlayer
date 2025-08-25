@@ -96,7 +96,7 @@ int main(void) {
                                  WhitePixel(display, screen));
     
     if (!window) {
-        cleanup_resources(display, NULL);
+        cleanup_resources(display, 0);
         handle_error(ERR_WINDOW_CREATION, display);
     }
     log_event("X11 Window created");

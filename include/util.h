@@ -21,5 +21,9 @@ uint16_t swap_endian16(uint16_t value);
 /* Clamping values (e.g., volume, progress bar) */
 float clamp(float value, float min, float max);
 
+/* Logging functions*/
+int init_logging(const char *filename);
+void close_logging(void);
+
 #endif
 /* UTIL_H */

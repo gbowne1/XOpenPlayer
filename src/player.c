@@ -70,7 +70,7 @@ void init_player(Display *display, Window window) {
     log_event("Player initialized");
 }
 
-void cleanup_resources(ResourceManager *resources, Display *display) {
+void cleanup_resources(Display *display, Window window) {
     if (resources->font_info) {
         XFreeFont(display, resources->font_info);
         XUnloadFont(display, resources->font);
@@ -317,7 +317,7 @@ void next_track(Display *display, Window window, int window_width)
     }
 }
 
-void pause(void) {
+void player_pause(void) {
     player_state.playing = 0;
     log_event("Playback paused.");
     printf("Paused.\n");

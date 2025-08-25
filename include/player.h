@@ -95,14 +95,14 @@ void display_welcome_message(Display *display, Window window, int width);
 /* Event handlers */
 void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width);
 void handle_mouse_click(XButtonEvent *event, int window_width);
-void cleanup_resources(ResourceManager *resources, Display *display);
+void cleanup_resources(Display *display, Window window);
 void cleanup_player(Display *display);
 void handle_error(int error_code, Display *display);
 void handle_resize(int new_width, int new_height);
 
 /* Playback control functions */
 void play(void);
-void pause(void);
+void player_pause(void);
 void stop(void);
 void next_track(Display *display, Window window, int window_width);
 void previous_track(Display *display, Window window, int window_width);
