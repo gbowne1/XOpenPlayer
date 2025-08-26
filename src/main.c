@@ -131,7 +131,7 @@ int main(void) {
     init_player(display, window);
     log_event("Player initialized.");
 
-    load_tracks("tracks.txt");
+    load_playlist("playlist.m3u");
     log_event("Tracks loaded.");
 
     /* Support for closing the window */

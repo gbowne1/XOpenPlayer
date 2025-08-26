@@ -28,8 +28,6 @@ struct Track {
     int duration_seconds; // Duration in seconds
 };
 
-extern struct PlayerState player_state;
-
 // Public playlist functions
 int load_playlist(const char* filename);
 int load_m3u(const char* filename);

@@ -62,7 +62,6 @@ void init_player(Display *display, Window window) {
     if (!font_info) {
         log_event("FAIL: load font");
         fprintf(stderr, "FAIL: load font\n");
-        /* polite? How very Canadian of you */
         XFreeGC(display, global_gc);
         exit(EXIT_FAILURE);
     }
@@ -70,16 +69,6 @@ void init_player(Display *display, Window window) {
     log_event("Player initialized");
 }
 
-void cleanup_resources(Display *display, Window window) {
-    if (resources->font_info) {
-        XFreeFont(display, resources->font_info);
-        XUnloadFont(display, resources->font);
-    }
-    if (resources->gc) {
-        XFreeGC(display, resources->gc);
-    }
-    // Clean up other resources...
-}
 
 void cleanup_player(Display *display) {
     if (font_info) {
@@ -262,7 +251,7 @@ void handle_mouse_click(XButtonEvent *event, int window_width)
        
         if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && event->x < start_x + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
             /* inside the "Pause" button */
-            pause();
+            player_pause();
         } 
         
         if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && event->x < start_x + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {

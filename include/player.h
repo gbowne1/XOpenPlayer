@@ -92,6 +92,8 @@ void init_player(Display *display, Window window);
 void draw_menu(Display *display, Window window, int width);
 void display_welcome_message(Display *display, Window window, int width);
 
+extern PlayerState player_state;
+
 /* Event handlers */
 void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width);
 void handle_mouse_click(XButtonEvent *event, int window_width);

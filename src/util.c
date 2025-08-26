@@ -60,7 +60,7 @@ void log_event(const char *message) {
     } else {
         fprintf(stderr, "WARN: Unable to open log file.\n");
     }
-    pthread_mutex_unlock(&log_mutex)
+    pthread_mutex_unlock(&log_mutex);
 }
 
 void close_logging() {
