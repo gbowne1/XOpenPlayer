@@ -53,4 +53,3 @@ void play_wav(const char *filename) {
     free(pcm_data);
     fclose(file);
 }
-

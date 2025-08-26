@@ -48,7 +48,7 @@ void log_event(const char *message) {
     time_str[strlen(time_str) - 1] = '\0';
 
     pthread_mutex_lock(&log_mutex);
-    
+
     struct tm *local = localtime(&now);
     FILE *log = fopen("application_log.txt", "a");
     if (log) {
@@ -97,4 +97,4 @@ float clamp(float value, float min, float max) {
     float r0 = (value > max) ? max : value;
     float r1 = (value < min) ? min : r0;
     return r1;
-} 
+}

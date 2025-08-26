@@ -18,10 +18,7 @@
 #define PLAYLIST_H
 
 #include <stdio.h>
-
-#define MAX_TITLE_LEN 256
-#define MAX_ARTIST_LEN 256
-#define MAX_TRACKS 100
+#include "player.h"
 
 struct Track {
     char title[MAX_TITLE_LEN];
@@ -33,5 +30,6 @@ int load_playlist(const char* filename);
 int load_m3u(const char* filename);
 int load_pls(const char* filename);
 int load_wpl(const char* filename);
+void handle_playlist_error(const char* message);
 
 #endif // PLAYLIST_H

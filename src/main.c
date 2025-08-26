@@ -35,6 +35,7 @@
 
 
 #include "player.h"
+#include "playlist.h"
 #include "util.h"
 
 /* Enum for standardized error codes */
@@ -94,7 +95,7 @@ int main(void) {
                                  10, 10, 800, 600, 1,
                                  BlackPixel(display, screen),
                                  WhitePixel(display, screen));
-    
+
     if (!window) {
         cleanup_resources(display, 0);
         handle_error(ERR_WINDOW_CREATION, display);
@@ -131,7 +132,7 @@ int main(void) {
     init_player(display, window);
     log_event("Player initialized.");
 
-    load_playlist("playlist.m3u");
+    load_playlist("sample.m3u");
     log_event("Tracks loaded.");
 
     /* Support for closing the window */
@@ -191,4 +192,3 @@ int main(void) {
 
     return 0;
 }
-

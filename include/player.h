@@ -41,8 +41,8 @@
 #define VOLUME_BAR_Y        280
 
 #define MAX_TRACKS 100
-#define MAX_TITLE_LEN 128
-#define MAX_ARTIST_LEN 64
+#define MAX_TITLE_LEN 256
+#define MAX_ARTIST_LEN 256
 
 /* =====================
  * Keyboard Input Constants

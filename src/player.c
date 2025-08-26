@@ -31,7 +31,7 @@
 /* the wild Greek has proclaimed that we can get away from this
 static PlayerState player_state = {0, 0.5f, 0.0f};
 */
-static PlayerState player_state = {.progress=0.5f};
+PlayerState player_state = {.progress=0.5f};
 
 static GC global_gc;
 static Font global_font;
@@ -117,7 +117,7 @@ void draw_progress_bar(Display *display, Window window, int width) {
                    WhitePixel(display, DefaultScreen(display)));
 
     XFillRectangle(display, window, global_gc,
-                   progress_x, 250, 
+                   progress_x, 250,
                    (unsigned int)(progress_width * player_state.progress), 10);
 }
 
@@ -191,6 +191,11 @@ void draw_menu(Display *display, Window window, int width) {
     XFillRectangle(display, window, gc,
                    0, 0, width, MENU_HEIGHT);
 
+	/* Got to set a white foreground text for */
+	/* the subsequent XDrawString call below */
+	XSetForeground(display, gc,
+                   WhitePixel(display, DefaultScreen(display)));
+
     /* Draw the 3 menu items */
     for (j = 0; j < 3; j++) {
 
@@ -247,13 +252,13 @@ void handle_mouse_click(XButtonEvent *event, int window_width)
         if (event->x >= start_x && event->x < start_x + BUTTON_WIDTH) {
             /* inside the "Play" button */
             play();
-        } 
-       
+        }
+
         if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && event->x < start_x + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
             /* inside the "Pause" button */
             player_pause();
-        } 
-        
+        }
+
         if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && event->x < start_x + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {
             stop();
         }
@@ -335,7 +340,7 @@ void display_welcome_message(Display *display, Window window, int width) {
     const char *message = "Welcome to XOpenPlayer!";
 
     XSetForeground(display, global_gc,
-                   WhitePixel(display, DefaultScreen(display)));
+                   BlackPixel(display, DefaultScreen(display)));
 
     text_width = XTextWidth(font_info, message, strlen(message));
 
@@ -410,7 +415,7 @@ void handle_resize(int new_width, int new_height) {
      * Optionally log the new size
      */
     char log_msg[128];
-    snprintf(log_msg, sizeof(log_msg), 
+    snprintf(log_msg, sizeof(log_msg),
              "Window resized to %dx%d.",
              new_width, new_height);
 
@@ -418,4 +423,3 @@ void handle_resize(int new_width, int new_height) {
 
     /* You could later add layout recalculations here if needed */
 }
-
