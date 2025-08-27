@@ -12,8 +12,8 @@ IDIR=/usr/local/include
 
 LIBS=-lX11 -lm
 
-SRCS = src/main.c  src/player.c  src/util.c  src/wav.c
-OBJS = src/main.o  src/player.o  src/util.o  src/wav.o
+SRCS = src/main.c  src/player.c  src/playlist.c  src/util.c  src/wav.c
+OBJS = src/main.o  src/player.o  src/playlist.o  src/util.o  src/wav.o
 
 .SUFFIXES: .c .o
 .c.o:
