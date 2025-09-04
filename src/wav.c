@@ -32,7 +32,15 @@ void read_wav_header(FILE *file, WAVHeader *header) {
 
 void *read_pcm_data(FILE *file, uint32_t data_size) {
     void *buffer = malloc(data_size);
-    fread(buffer, data_size, 1, file);
+    if (!buffer) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return NULL;
+    }
+    if (fread(buffer, data_size, 1, file) != 1) {
+        fprintf(stderr, "Error: Failed to read PCM data\n");
+        free(buffer);
+        return NULL;
+    }
     return buffer;
 }
 
