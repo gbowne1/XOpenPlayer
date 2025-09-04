@@ -93,8 +93,17 @@ uint16_t swap_endian16(uint16_t value) {
     return ret;
 }
 
+int is_big_endian(void) {
+    union {
+        uint32_t i;
+        char c[4];
+    } test = {0x01020304};
+    return test.c[0] == 1; /* Returns 1 for big-endian, 0 for little-endian */
+}
+
 float clamp(float value, float min, float max) {
     float r0 = (value > max) ? max : value;
     float r1 = (value < min) ? min : r0;
     return r1;
 }
+
