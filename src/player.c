@@ -353,8 +353,8 @@ void display_welcome_message(Display *display, Window window, int width) {
 void load_tracks(const char *filename) {
     FILE *f = fopen(filename, "r");
     if (!f) return;
-
     player_state.track_count = 0;
+    player_state.current_track = 0;
     while (fscanf(f, "%127[^\t]\t%63[^\t]\t%d\n",
                   player_state.tracks[player_state.track_count].title,
                   player_state.tracks[player_state.track_count].artist,
