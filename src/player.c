@@ -39,6 +39,7 @@ static Font global_font;
 /* Font metadata */
 static XFontStruct *font_info;
 
+/* should this not be an extern instead of static */
 static int dragging_volume = 0;
 static int dragging_progress = 0;
 
@@ -160,43 +161,43 @@ void draw_player_controls(Display *display, Window window, int width) {
     draw_volume_control(display, window);
 }
 
-void draw_menu(Display *display, Window window, int width) {
+/* void draw_menu(Display *display, Window window, int width) {
     Font font;
     int j, text_width, x_position;
     const char *menu_items[] = {"File", "Edit", "Help"};
 
-    /* Create and set up graphics context */
+    //  Create and set up graphics context //
     GC gc = XCreateGC(display, window, 0, NULL);
     if (!gc) {
         log_event("FAIL: create graphics context for menu");
         return;
     }
 
-    /* Set up font */
+    /* Set up font 
     font = XLoadFont(display, "fixed");
     if (!font) {
         XFreeGC(display, gc);
         log_event("FAIL: load font");
-        return;
+      return;
     }
 
-    /* Set background and text colors */
+    //  Set background and text colors
     XSetBackground(display, gc,
                    WhitePixel(display, DefaultScreen(display)));
 
     XSetForeground(display, gc,
                    BlackPixel(display, DefaultScreen(display)));
 
-    /* Draw menu background */
+    // Draw menu background 
     XFillRectangle(display, window, gc,
                    0, 0, width, MENU_HEIGHT);
 
-	/* Got to set a white foreground text for */
-	/* the subsequent XDrawString call below */
+	// Got to set a white foreground text for 
+	// the subsequent XDrawString call below 
 	XSetForeground(display, gc,
                    WhitePixel(display, DefaultScreen(display)));
 
-    /* Draw the 3 menu items */
+    // Draw the 3 menu items
     for (j = 0; j < 3; j++) {
 
         text_width = XTextWidth(font_info, menu_items[j], strlen(menu_items[j]));
@@ -208,12 +209,26 @@ void draw_menu(Display *display, Window window, int width) {
 
     }
 
-    /* Cleanup */
+    // Cleanup
     XUnloadFont(display, font);
-    /* obvious bug */
-    /* XFreeFont(display, &font); */
+    // obvious bug */
+    /* XFreeFont(display, &font); *
     XFreeGC(display, gc);
 
+} */
+
+/* New draw_menu test this out commented out the old one for posterity */
+void draw_menu(Display *display, Window window, int width) {
+    int j, text_width, x_position;
+    const char *menu_items[] = {"File", "Edit", "Help"};
+    XSetForeground(display, global_gc, BlackPixel(display, DefaultScreen(display)));
+    XFillRectangle(display, window, global_gc, 0, 0, width, MENU_HEIGHT);
+    XSetForeground(display, global_gc, WhitePixel(display, DefaultScreen(display)));
+    for (j = 0; j < 3; j++) {
+        text_width = XTextWidth(font_info, menu_items[j], strlen(menu_items[j]));
+        x_position = j * MENU_ITEM_WIDTH + (MENU_ITEM_WIDTH - text_width) / 2;
+        XDrawString(display, window, global_gc, x_position, 25, menu_items[j], strlen(menu_items[j]));
+    }
 }
 
 void handle_keypress(XKeyEvent *event, Display *display,
@@ -237,44 +252,48 @@ void handle_keypress(XKeyEvent *event, Display *display,
     }
 }
 
-void handle_mouse_click(XButtonEvent *event, int window_width)
-{
-    int total_button_width, start_x, progress_bar_width;
+void handle_mouse_click(XButtonEvent *event, Display *display, Window window, int window_width) {
+    int progress_bar_width = window_width > 100 ? window_width - 100 : 100; // Prevent division by zero
     float progress_position, volume_position;
 
-    /* Calculate button positions dynamically */
-    total_button_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
-    start_x = (window_width - total_button_width) / 2;
-
-    /* Check if the click is within the button area */
     if (event->y >= BUTTON_Y && event->y <= BUTTON_Y + BUTTON_HEIGHT) {
+        int total_button_width = (BUTTON_WIDTH * 3) + (BUTTON_SPACING * 2);
+        int start_x = (window_width - total_button_width) / 2;
 
         if (event->x >= start_x && event->x < start_x + BUTTON_WIDTH) {
-            /* inside the "Play" button */
             play();
+            log_event("Play button clicked");
         }
-
-        if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && event->x < start_x + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
-            /* inside the "Pause" button */
+        if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && 
+            event->x < start_x + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
             player_pause();
+            log_event("Pause button clicked");
         }
-
-        if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && event->x < start_x + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {
+        if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && 
+            event->x < start_x + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {
             stop();
+            log_event("Stop button clicked");
         }
-
     }
-
-    /* Handle volume and progress bar clicks */
     if (event->y >= PROGRESS_BAR_Y && event->y <= PROGRESS_BAR_Y + PROGRESS_BAR_HEIGHT) {
-        /* Update progress */
-        progress_bar_width = window_width - 100;
-        progress_position = (float)(event->x - 50) / (float)progress_bar_width;
+        progress_position = (float)(event->x - 50) / progress_bar_width;
         player_state.progress = fmaxf(0.0f, fminf(1.0f, progress_position));
+        dragging_progress = 1;
+        log_event("Progress bar clicked");
+        XClearWindow(display, window);
+        draw_menu(display, window, window_width);
+        draw_player_controls(display, window, window_width);
+        display_track_info(display, window, window_width);
     } else if (event->y >= VOLUME_BAR_Y && event->y <= VOLUME_BAR_Y + VOLUME_BAR_HEIGHT) {
-        /* Update volume */
         volume_position = (float)(event->x - 50) / VOLUME_BAR_WIDTH;
         player_state.volume = fmaxf(0.0f, fminf(1.0f, volume_position));
+        audio_set_volume(player_state.volume); // Update audio backend
+        dragging_volume = 1;
+        log_event("Volume bar clicked");
+        XClearWindow(display, window);
+        draw_menu(display, window, window_width);
+        draw_player_controls(display, window, window_width);
+        display_track_info(display, window, window_width);
     }
 }
 
