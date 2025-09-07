@@ -171,14 +171,14 @@ void draw_player_controls(Display *display, Window window, int width) {
     int j, text_width, x_position;
     const char *menu_items[] = {"File", "Edit", "Help"};
 
-    //  Create and set up graphics context //
+    //  Create and set up graphics context
     GC gc = XCreateGC(display, window, 0, NULL);
     if (!gc) {
         log_event("FAIL: create graphics context for menu");
         return;
     }
 
-    /* Set up font
+    //  Set up font
     font = XLoadFont(display, "fixed");
     if (!font) {
         XFreeGC(display, gc);
@@ -216,8 +216,8 @@ void draw_player_controls(Display *display, Window window, int width) {
 
     // Cleanup
     XUnloadFont(display, font);
-    // obvious bug */
-    /* XFreeFont(display, &font); *
+    // obvious bug
+    // XFreeFont(display, &font);
     XFreeGC(display, gc);
 
 } */
