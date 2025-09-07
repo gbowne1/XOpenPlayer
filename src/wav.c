@@ -19,6 +19,7 @@
 #include "wav.h"
 #include "util.h"
 #include "player.h"
+#include "audio.h"
 
 void read_wav_header(FILE *file, WAVHeader *header) {
     fread(header, sizeof(WAVHeader), 1, file);
@@ -91,7 +92,7 @@ void play_wav(const char *filename) {
         fclose(file);
         return;
     }
-    
+
     // Simulate playback (no audio backend)
     printf("Simulating playback of %s: %u bytes, %d Hz, %d-bit, %d channels\n",
            filename, header.data_size, header.sample_rate, header.bits_per_sample, header.num_channels);
@@ -103,4 +104,3 @@ void play_wav(const char *filename) {
     free(pcm_data);
     fclose(file);
 }
-

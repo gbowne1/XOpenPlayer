@@ -158,7 +158,7 @@ int main(void) {
             handle_keypress(&event.xkey, display, window, window_width);
             log_event("KeyPress event");
         } else if (event.type == ButtonPress) {
-            handle_mouse_click(&event.xbutton, window_width);
+            handle_mouse_click(&event.xbutton, display, window, window_width);
             log_event("ButtonPress event");
         } else if (event.type == ClientMessage) {
             if ((long)event.xclient.data.l[0] == (long)wmDeleteWindow) {

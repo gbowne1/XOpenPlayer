@@ -106,4 +106,3 @@ float clamp(float value, float min, float max) {
     float r1 = (value < min) ? min : r0;
     return r1;
 }
-

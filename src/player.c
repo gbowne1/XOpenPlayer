@@ -26,6 +26,7 @@
 #include <time.h>
 #include "player.h"
 #include "util.h"
+#include "audio.h"
 
 /* Initial state */
 /* the wild Greek has proclaimed that we can get away from this
@@ -74,7 +75,11 @@ void init_player(Display *display, Window window) {
 void cleanup_player(Display *display) {
     if (font_info) {
         XFreeFont(display, font_info);
-        XUnloadFont(display, global_font);
+
+        /* tbh I don't feel as though the following call is necessary
+           (just generating a 'BadFont' error on exit) */
+        /* XUnloadFont(display, global_font); */
+
         log_event("Font unloaded");
     }
     XFreeGC(display, global_gc);
@@ -173,7 +178,7 @@ void draw_player_controls(Display *display, Window window, int width) {
         return;
     }
 
-    /* Set up font 
+    /* Set up font
     font = XLoadFont(display, "fixed");
     if (!font) {
         XFreeGC(display, gc);
@@ -188,13 +193,13 @@ void draw_player_controls(Display *display, Window window, int width) {
     XSetForeground(display, gc,
                    BlackPixel(display, DefaultScreen(display)));
 
-    // Draw menu background 
+    // Draw menu background
     XFillRectangle(display, window, gc,
                    0, 0, width, MENU_HEIGHT);
 
-	// Got to set a white foreground text for 
-	// the subsequent XDrawString call below 
-	XSetForeground(display, gc,
+    // Got to set a white foreground text for
+    // the subsequent XDrawString call below
+    XSetForeground(display, gc,
                    WhitePixel(display, DefaultScreen(display)));
 
     // Draw the 3 menu items
@@ -264,12 +269,12 @@ void handle_mouse_click(XButtonEvent *event, Display *display, Window window, in
             play();
             log_event("Play button clicked");
         }
-        if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING && 
+        if (event->x >= start_x + BUTTON_WIDTH + BUTTON_SPACING &&
             event->x < start_x + 2 * BUTTON_WIDTH + BUTTON_SPACING) {
             player_pause();
             log_event("Pause button clicked");
         }
-        if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) && 
+        if (event->x >= start_x + 2 * (BUTTON_WIDTH + BUTTON_SPACING) &&
             event->x < start_x + 3 * BUTTON_WIDTH + 2 * BUTTON_SPACING) {
             stop();
             log_event("Stop button clicked");
@@ -310,8 +315,7 @@ void stop(void) {
     printf("Stopped.\n");
 }
 
-void next_track(Display *display, Window window, int window_width)
-{
+void next_track(Display *display, Window window, int window_width) {
     if (player_state.track_count > 0) {
 
         player_state.current_track =

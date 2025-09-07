@@ -96,7 +96,7 @@ extern PlayerState player_state;
 
 /* Event handlers */
 void handle_keypress(XKeyEvent *event, Display *display, Window window, int window_width);
-void handle_mouse_click(XButtonEvent *event, int window_width);
+void handle_mouse_click(XButtonEvent *event, Display *display, Window window, int window_width);
 void cleanup_resources(Display *display, Window window);
 void cleanup_player(Display *display);
 void handle_error(int error_code, Display *display);

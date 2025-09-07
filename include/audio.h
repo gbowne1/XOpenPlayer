@@ -40,4 +40,3 @@ void audio_set_volume(float volume);
 void audio_cleanup(void);
 
 #endif /* AUDIO_H */
-
