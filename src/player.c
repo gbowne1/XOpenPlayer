@@ -44,6 +44,10 @@ static XFontStruct *font_info;
 static int dragging_volume = 0;
 static int dragging_progress = 0;
 
+static int window_width = 800;  /* Default width */
+static int window_height = 600; /* Default height */
+static Time last_resize_time = 0;
+
 void init_player(Display *display, Window window) {
     /* Initialize player state */
     player_state.playing = 0;
@@ -431,18 +435,42 @@ void handle_mouse_motion(XMotionEvent *event, int window_width) {
     }
 }
 
-void handle_resize(int new_width, int new_height) {
-    /* Currently, you don't need to store width/height,
-     * but you can use this to update layout or trigger redraws.
-     *
-     * Optionally log the new size
-     */
-    char log_msg[128];
-    snprintf(log_msg, sizeof(log_msg),
-             "Window resized to %dx%d.",
-             new_width, new_height);
+void handle_resize(Display *display, Window window, int new_width, int new_height) {
+    // Validate dimensions
+    if (new_width <= 0 || new_height <= 0) {
+        log_event("Invalid window size");
+        return;
+    }
 
+    // Debounce: only process if 100ms have passed since last resize
+    Time current_time = CurrentTime; // Note: You'd need to get this from the XEvent
+    if (current_time - last_resize_time < 100) {
+        return;
+    }
+    last_resize_time = current_time;
+
+    // Update stored dimensions
+    window_width = new_width;
+    window_height = new_height;
+
+    // Log the new size
+    char log_msg[128];
+    snprintf(log_msg, sizeof(log_msg), "Window resized to %dx%d.", new_width, new_height);
     log_event(log_msg);
 
-    /* You could later add layout recalculations here if needed */
+    // Enforce minimum size for usability (e.g., ensure buttons fit)
+    if (window_width < 400) { // Example minimum width
+        window_width = 400;
+        XResizeWindow(display, window, window_width, window_height);
+    }
+
+    // Clear window and redraw all UI elements
+    XClearWindow(display, window);
+    draw_menu(display, window, window_width);
+    draw_player_controls(display, window, window_width);
+    display_welcome_message(display, window, window_width);
+    display_track_info(display, window, window_width);
+
+    // Flush display to ensure updates are visible
+    XFlush(display);
 }
