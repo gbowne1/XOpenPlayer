@@ -100,7 +100,7 @@ void handle_mouse_click(XButtonEvent *event, Display *display, Window window, in
 void cleanup_resources(Display *display, Window window);
 void cleanup_player(Display *display);
 void handle_error(int error_code, Display *display);
-void handle_resize(int new_width, int new_height);
+void handle_resize(Display *display, Window window, int new_width, int new_height);
 
 /* Playback control functions */
 void play(void);
